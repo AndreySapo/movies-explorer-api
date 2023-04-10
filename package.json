@@ -1,0 +1,16 @@
+{
+  "name": "movies-explorer-api",
+  "version": "1.0.0",
+  "description": "backend for Andrey Sapo's diploma in Yandex.Praktikum",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint .",
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "Andrey Sapo",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
