@@ -1,33 +1,28 @@
 const bcrypt = require('bcrypt');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const ErrorNotFound = require('../errors/ErrorNotFound');
+const ErrorBadRequest = require('../errors/ErrorBadRequest');
+const ErrorConflict = require('../errors/ErrorConflict');
+const ErrorUnauthorized = require('../errors/ErrorUnauthorized');
 
-module.exports.userInfo = (req, res) => { // ! добавть next для обработки ошибок
-  // TODO обработать ошибки
-  // res.send(req.user);
+module.exports.userInfo = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        // throw new ErrorNotFound('Пользователя с указанным _id не существует');
-        res.send('Пользователя с указанным _id не существует');
+        throw new ErrorNotFound('Пользователя с указанным _id не существует');
       }
 
       res.send({
-        data: {
-          name: user.name,
-          email: user.email,
-        },
+        name: user.name,
+        email: user.email,
       });
     })
-    .catch((err) => res.send(err));
+    .catch((err) => next(err));
 };
 
-module.exports.updateUser = (req, res) => { // ! добавть next для обработки ошибок
-  // ! пока что просто выводим то, что отправили в боди
-  // TODO сделать запрос на обновление данных пользователя
-  // res.send(req.user);
+module.exports.updateUser = (req, res, next) => {
   const { email, name } = req.body;
 
   User.findByIdAndUpdate(
@@ -36,12 +31,21 @@ module.exports.updateUser = (req, res) => { // ! добавть next для об
     { new: true, runValidators: true },
   )
     .then((user) => {
-      res.send({ user });
+      if (!user) {
+        throw new ErrorNotFound('Пользователь по указанному _id не найден.');
+      }
+      res.send(user);
     })
-    .catch((err) => res.send(err));// TODO добавить обработку ошибок
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ErrorBadRequest('Некорректные данные при создании карточки'));
+      } else {
+        next(err);
+      }
+    });
 };
 
-module.exports.createUser = (req, res) => { // ! добавть next для обработки ошибок
+module.exports.createUser = (req, res, next) => {
   const { email, name, password } = req.body;
 
   bcrypt.hash(password, 10)
@@ -59,14 +63,28 @@ module.exports.createUser = (req, res) => { // ! добавть next для об
         _id,
       });
     })
-    .catch((err) => res.send(err));// TODO добавить обработку ошибок
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        next(new ErrorBadRequest('Некорректные данные при создании карточки'));
+        return;
+      }
+      if (err.code === 11000) {
+        next(new ErrorConflict('Пользователь с таким электронным адресом уже зарегистрирован'));
+        return;
+      }
+      next(err);
+    });
 };
 
-module.exports.signin = (req, res) => { // ! добавть next для обработки ошибок
+module.exports.signin = (req, res, next) => {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
     .then((user) => {
+      if (!user) {
+        throw new ErrorUnauthorized('Неправильные почта или пароль');
+      }
+
       const token = jwt.sign(
         { _id: user._id },
         // TODO подключить env
@@ -81,7 +99,7 @@ module.exports.signin = (req, res) => { // ! добавть next для обра
       //   httpOnly: true,
       // });
 
-      res.send({ token: `${token}` });
+      res.send({ token });
     })
-    .catch((err) => res.send(err));
+    .catch(next);
 };

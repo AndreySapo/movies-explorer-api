@@ -1,14 +1,7 @@
 const usersRouter = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-// const regexLink = require('../utils/regexLink');
 const regexEmail = require('../utils/regexEmail');
-const { userInfo, updateUser, createUser: signup, signin } = require('../controllers/users');
-
-// # возвращает информацию о пользователе (email и имя)
-// GET /users/me
-
-// # обновляет информацию о пользователе (email и имя)
-// PATCH /users/me
+const { userInfo, updateUser } = require('../controllers/users');
 
 usersRouter.get('/me', userInfo);
 

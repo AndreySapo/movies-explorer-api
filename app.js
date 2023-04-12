@@ -2,10 +2,12 @@ const { PORT = 3000, SERVER = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const { celebrate, Joi } = require('celebrate');
+const { errors, celebrate, Joi } = require('celebrate');
 const regexEmail = require('./utils/regexEmail');
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
+const { ERROR_INTERNAL_SERVER } = require('./errors/errors');
+const ErrorNotFound = require('./errors/ErrorNotFound');
 const { createUser, signin } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
@@ -18,14 +20,6 @@ mongoose.connect(SERVER, { useNewUrlParser: true });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// # создаёт пользователя с переданными в теле
-// # email, password и name
-// POST /signup
-
-// # проверяет переданные в теле почту и пароль
-// # и возвращает JWT
-// POST /signin
 
 app.post(
   '/signup',
@@ -52,7 +46,19 @@ app.post(
 
 app.use('/users', auth, usersRouter);
 app.use('/movies', auth, moviesRouter);
+app.use((req, res, next) => next(new ErrorNotFound('Этот путь не реализован')));
 
+// ! удалить перед отправкой
 // eslint-disable-next-line no-console
 console.log(`Сервер ${SERVER}:${PORT} успешно подключен`);
+
+app.use(errors());
+app.use((err, req, res, next) => {
+  if (err.statusCode) {
+    res.status(err.statusCode).send({ message: err.message });
+  } else {
+    res.status(ERROR_INTERNAL_SERVER).send({ message: 'На сервере произошла ошибка' });
+  }
+  next();
+});
 app.listen(PORT);
