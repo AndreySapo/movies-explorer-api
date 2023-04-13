@@ -14,6 +14,7 @@ const { ERROR_INTERNAL_SERVER } = require('./errors/errors');
 const ErrorNotFound = require('./errors/ErrorNotFound');
 const { createUser, signin } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
 app.use(cors());
@@ -26,6 +27,7 @@ mongoose.connect(SERVER, { useNewUrlParser: true });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post(
   '/signup',
@@ -58,6 +60,7 @@ app.use((req, res, next) => next(new ErrorNotFound('Этот путь не ре�
 // eslint-disable-next-line no-console
 console.log(`Сервер ${SERVER}:${PORT} успешно подключен`);
 
+app.use(errorLogger);
 app.use(errors());
 app.use((err, req, res, next) => {
   if (err.statusCode) {
