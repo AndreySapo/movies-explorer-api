@@ -94,10 +94,10 @@ module.exports.signin = (req, res, next) => {
       );
 
       // TODO подумать, нужен ли куки?
-      // res.cookie('jwt', token, {
-      //   maxAge: 3600000 * 24 * 7,
-      //   httpOnly: true,
-      // });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
 
       res.send({ token });
     })
