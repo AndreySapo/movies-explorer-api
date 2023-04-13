@@ -3,6 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const cors = require('cors');
 const regexEmail = require('./utils/regexEmail');
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
@@ -12,6 +14,7 @@ const { createUser, signin } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
 const app = express();
+app.use(cors());
 
 mongoose.set('strictQuery', false);
 
