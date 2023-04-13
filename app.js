@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
 // eslint-disable-next-line import/no-extraneous-dependencies
+const cookieParser = require('cookie-parser');
+// eslint-disable-next-line import/no-extraneous-dependencies
 const cors = require('cors');
 const regexEmail = require('./utils/regexEmail');
 const usersRouter = require('./routes/users');
@@ -15,6 +17,7 @@ const auth = require('./middlewares/auth');
 
 const app = express();
 app.use(cors());
+app.use(cookieParser());
 
 mongoose.set('strictQuery', false);
 
