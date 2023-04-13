@@ -1,12 +1,14 @@
+require('dotenv').config();
+
 const { PORT = 3000, SERVER = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors, celebrate, Joi } = require('celebrate');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const cookieParser = require('cookie-parser');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const cors = require('cors');
+const helmet = require('helmet');
 const regexEmail = require('./utils/regexEmail');
 const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
@@ -19,12 +21,18 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const app = express();
 app.use(cors());
 app.use(cookieParser());
+app.use(helmet());
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // за 15 минут
+  max: 100, // можно совершить максимум 100 запросов с одного IP
+});
 
 mongoose.set('strictQuery', false);
 
 // подключаемся к серверу mongo
 mongoose.connect(SERVER, { useNewUrlParser: true });
 
+app.use(limiter);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
@@ -55,10 +63,6 @@ app.post(
 app.use('/users', auth, usersRouter);
 app.use('/movies', auth, moviesRouter);
 app.use((req, res, next) => next(new ErrorNotFound('Этот путь не реализован')));
-
-// ! удалить перед отправкой
-// eslint-disable-next-line no-console
-console.log(`Сервер ${SERVER}:${PORT} успешно подключен`);
 
 app.use(errorLogger);
 app.use(errors());

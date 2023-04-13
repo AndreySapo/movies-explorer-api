@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url');
-// eslint-disable-next-line import/no-extraneous-dependencies
 const { default: isURL } = require('validator/lib/isURL');
 
 const movieSchema = new mongoose.Schema({

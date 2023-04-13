@@ -6,6 +6,8 @@ const ErrorBadRequest = require('../errors/ErrorBadRequest');
 const ErrorConflict = require('../errors/ErrorConflict');
 const ErrorUnauthorized = require('../errors/ErrorUnauthorized');
 
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 module.exports.userInfo = (req, res, next) => {
   const { _id } = req.user;
   User.findById(_id)
@@ -87,13 +89,10 @@ module.exports.signin = (req, res, next) => {
 
       const token = jwt.sign(
         { _id: user._id },
-        // TODO подключить env
-        // NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        'dev-secret',
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
 
-      // TODO подумать, нужен ли куки?
       res.cookie('jwt', token, {
         maxAge: 3600000 * 24 * 7,
         httpOnly: true,
