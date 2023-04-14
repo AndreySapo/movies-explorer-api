@@ -102,3 +102,12 @@ module.exports.signin = (req, res, next) => {
     })
     .catch(next);
 };
+
+module.exports.signout = (req, res, next) => {
+  if (req.cookies.jwt) {
+    res.clearCookie('jwt');
+    res.send({ message: 'cookie был удален' });
+  } else {
+    next(new ErrorBadRequest('Некорректные данные для выхода'));
+  }
+};

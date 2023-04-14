@@ -14,7 +14,7 @@ const usersRouter = require('./routes/users');
 const moviesRouter = require('./routes/movies');
 const { ERROR_INTERNAL_SERVER } = require('./errors/errors');
 const ErrorNotFound = require('./errors/ErrorNotFound');
-const { createUser, signin } = require('./controllers/users');
+const { createUser, signin, signout } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -58,6 +58,12 @@ app.post(
     }),
   }),
   signin,
+);
+
+app.post(
+  '/signout',
+  auth,
+  signout,
 );
 
 app.use('/users', auth, usersRouter);
