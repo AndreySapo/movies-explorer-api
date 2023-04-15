@@ -39,6 +39,10 @@ module.exports.updateUser = (req, res, next) => {
       res.send(user);
     })
     .catch((err) => {
+      if (err.code === 11000) {
+        next(new ErrorConflict('Пользователь с таким электронным адресом уже зарегистрирован'));
+        return;
+      }
       if (err.name === 'ValidationError') {
         next(new ErrorBadRequest('Некорректные данные при создании карточки'));
       } else {
@@ -67,7 +71,7 @@ module.exports.createUser = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ErrorBadRequest('Некорректные данные при создании карточки'));
+        next(new ErrorBadRequest('Некорректные данные при создании пользователя'));
         return;
       }
       if (err.code === 11000) {
@@ -103,11 +107,7 @@ module.exports.signin = (req, res, next) => {
     .catch(next);
 };
 
-module.exports.signout = (req, res, next) => {
-  if (req.cookies.jwt) {
-    res.clearCookie('jwt');
-    res.send({ message: 'cookie был удален' });
-  } else {
-    next(new ErrorBadRequest('Некорректные данные для выхода'));
-  }
+module.exports.signout = (req, res) => {
+  res.clearCookie('jwt');
+  res.send({ message: 'cookie был удален' });
 };

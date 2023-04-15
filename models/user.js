@@ -22,12 +22,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     minlength: [2, 'Обязано быть больше 2 символов'],
     maxlength: [30, 'Обязано быть меньше 30 символов'],
-    default: 'Александр',
+    required: true,
   },
 });
 
-// eslint-disable-next-line func-names
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {

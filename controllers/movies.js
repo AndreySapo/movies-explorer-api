@@ -4,7 +4,7 @@ const ErrorNotFound = require('../errors/ErrorNotFound');
 const ErrorForbidden = require('../errors/ErrorForbidden');
 
 module.exports.getMovies = (req, res) => {
-  Movie.find({})
+  Movie.find({ owner: req.user._id })
     .then((movies) => res.send({ data: movies }))
     .catch((err) => res.send(err));
 };
@@ -76,7 +76,7 @@ module.exports.deleteMovie = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ErrorBadRequest('Удаление фильма с несуществующим в БД id'));
+        next(new ErrorBadRequest('Некорректные данные при удалении фильма'));
       } else {
         next(err);
       }

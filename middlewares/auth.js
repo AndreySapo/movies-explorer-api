@@ -21,7 +21,6 @@ const generatePayload = (token) => {
   return payload;
 };
 
-// eslint-disable-next-line consistent-return
 module.exports = (req, res, next) => {
   const { authorization } = req.headers;
 
@@ -37,5 +36,5 @@ module.exports = (req, res, next) => {
     return handleAuthError();
   }
 
-  next();
+  return next();
 };
