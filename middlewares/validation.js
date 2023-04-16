@@ -6,7 +6,14 @@ module.exports.createUserValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().min(2).max(30).required(),
     email: Joi.string().required().regex(regexEmail),
-    password: Joi.string().required().min(8),
+    password: Joi.string().required(),
+  }),
+});
+
+module.exports.updateUserValidation = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    email: Joi.string().required().regex(regexEmail),
   }),
 });
 

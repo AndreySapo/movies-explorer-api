@@ -44,7 +44,7 @@ module.exports.updateUser = (req, res, next) => {
         return;
       }
       if (err.name === 'ValidationError') {
-        next(new ErrorBadRequest('Некорректные данные при создании карточки'));
+        next(new ErrorBadRequest('Некорректные данные при создании пользователя'));
       } else {
         next(err);
       }

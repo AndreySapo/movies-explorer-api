@@ -2,7 +2,6 @@ require('dotenv').config();
 
 // библиотеки из npm
 const express = require('express');
-const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
@@ -14,7 +13,8 @@ const helmet = require('helmet');
 const appRouter = require('./routes/index');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const handleErrors = require('./middlewares/handleErrors');
-const { PORT, SERVER } = require('./utils/database');
+const { PORT, DATABASE } = require('./utils/database');
+const { limiter } = require('./utils/limiter');
 
 // вкл
 const app = express();
@@ -24,14 +24,10 @@ app.use(cors());
 app.use(cookieParser());
 app.use(helmet());
 app.use(requestLogger);
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // за 15 минут
-  max: 100, // можно совершить максимум 100 запросов с одного IP
-});
 
 // подключаемся к серверу mongo
 mongoose.set('strictQuery', false);
-mongoose.connect(SERVER, { useNewUrlParser: true });
+mongoose.connect(DATABASE, { useNewUrlParser: true });
 
 // подключаем необходимые библиотеки
 app.use(limiter);
