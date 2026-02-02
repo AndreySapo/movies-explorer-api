@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-require('mongoose-type-url');
+//require('mongoose-type-url');
 const { default: isURL } = require('validator/lib/isURL');
 
 const movieSchema = new mongoose.Schema({
@@ -30,7 +30,7 @@ const movieSchema = new mongoose.Schema({
   },
   // * image — ссылка на постер к фильму. Обязательное поле-строка. Запишите её URL-адресом.
   image: {
-    type: mongoose.SchemaTypes.Url,
+    type: String,
     required: true,
     validate: {
       validator: (value) => isURL(value),
@@ -39,7 +39,7 @@ const movieSchema = new mongoose.Schema({
   },
   // * trailerLink — ссылка на трейлер фильма. Обязательное поле-строка. Запишите её URL-адресом.
   trailerLink: {
-    type: mongoose.SchemaTypes.Url,
+    type: String,
     required: true,
     validate: {
       validator: (value) => isURL(value),
@@ -49,7 +49,7 @@ const movieSchema = new mongoose.Schema({
   // * thumbnail — миниатюрное изображение постера к фильму. Обязательное поле-строка.
   // * Запишите её URL-адресом.
   thumbnail: {
-    type: mongoose.SchemaTypes.Url,
+    type: String,
     required: true,
     validate: {
       validator: (value) => isURL(value),

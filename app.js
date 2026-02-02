@@ -3,7 +3,6 @@ require('dotenv').config();
 // библиотеки из npm
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
@@ -27,12 +26,12 @@ app.use(requestLogger);
 
 // подключаемся к серверу mongo
 mongoose.set('strictQuery', false);
-mongoose.connect(DATABASE, { useNewUrlParser: true });
+mongoose.connect(DATABASE);//, { useNewUrlParser: true });
 
 // подключаем необходимые библиотеки
 app.use(limiter);
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // подключаем роутер
 app.use(appRouter);

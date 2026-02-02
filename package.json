@@ -11,26 +11,22 @@
   "author": "Andrey Sapo",
   "license": "ISC",
   "devDependencies": {
-    "eslint": "^8.38.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "nodemon": "^2.0.22"
+    "eslint": "^9.39.2",
+    "nodemon": "^3.1.11"
   },
   "dependencies": {
-    "bcrypt": "^5.1.0",
-    "body-parser": "^1.20.2",
+    "bcrypt": "^6.0.0",
     "celebrate": "^15.0.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^5.2.1",
     "express-rate-limit": "^6.7.0",
     "express-winston": "^4.2.0",
     "helmet": "^6.1.5",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3",
-    "mongoose-type-url": "^2.1.0",
-    "validator": "^13.9.0",
+    "mongoose": "^9.1.5",
+    "validator": "^13.15.26",
     "winston": "^3.8.2"
   }
 }
